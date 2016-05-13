@@ -6,7 +6,7 @@
   var canvas = document.querySelector('#image');
   var ctx = canvas.getContext('2d');
 
-  var myWorker = new Worker("worker.js");
+  var imageWorker = new Worker('scripts/worker.js');
 
   function handleImage(e){
     var reader = new FileReader();
@@ -44,9 +44,9 @@
 
     // Hint! This is where you should post messages to the web worker and
     // receive messages from the web worker.
-      myWorker.postMessage({'imageData': imageData, 'type': type}); // Sending message as an object to the worker
+    imageWorker.postMessage({'imageData': imageData, 'type': type}); // Sending message as an object to the worker
 
-      myWorker.onmessage = function(e) {
+      imageWorker.onmessage = function(e) {
         toggleButtonsAbledness();
         var image = e.data;
         console.log("on message is working");
@@ -54,28 +54,13 @@
         console.log("No manipulated image returned.");
       };
 
-      myWorker.onerror = function(error){
+      imageWorker.onerror = function(error){
         function WorkerException(message){
           this.name = "WorkerException";
           this.message = message;
         };
         throw new WorkerException('Worker error.');
       };
-
-    length = imageData.data.length / 4;
-    for (i = j = 0, ref = length; 0 <= ref ? j <= ref : j >= ref; i = 0 <= ref ? ++j : --j) {
-      r = imageData.data[i * 4 + 0];
-      g = imageData.data[i * 4 + 1];
-      b = imageData.data[i * 4 + 2];
-      a = imageData.data[i * 4 + 3];
-      pixel = manipulate(type, r, g, b, a);
-      imageData.data[i * 4 + 0] = pixel[0];
-      imageData.data[i * 4 + 1] = pixel[1];
-      imageData.data[i * 4 + 2] = pixel[2];
-      imageData.data[i * 4 + 3] = pixel[3];
-    }
-    toggleButtonsAbledness();
-    return ctx.putImageData(imageData, 0, 0);
   };
 
   function revertImage() {
