@@ -44,11 +44,12 @@
 
     // Hint! This is where you should post messages to the web worker and
     // receive messages from the web worker.
-      myWorker.postMessage({'imageData': imageData, 'type': type}); // Sending message as an object to the worker
+      myWorker.postMessage({'imageData': imageData, 'type': type}console.log("Web Worker posting message");); // Sending message as an object to the worker
 
       myWorker.onmessage = function(e) {
         toggleButtonsAbledness();
         var image = e.data;
+        console.log("on message is working");
         if(image) return ctx.putImageData(e.data, 0, 0);
         console.log("No manipulated image returned.");
       };
